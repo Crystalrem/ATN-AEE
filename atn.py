@@ -33,7 +33,7 @@ def test():
     """
     """
     print "ok\n"
-    batch_size = 64
+    batch_size = mnist.test.num_examples
     batch_xs, batch_ys = mnist.test.next_batch(batch_size)
     model = atn.ATN(images_holder, label_holder, p_keep_holder, rerank_holder)
 	
@@ -81,12 +81,12 @@ def test():
             				})"""
 
         # Show some results.
-        f, a = plt.subplots(2, 10, figsize=(10, 2))
-        
-        for i in range(10):
-            #a[0][i].imshow(np.reshape(mnist.test.images[i], (28, 28)))
-            a[0][i].imshow(np.reshape(batch_xs[i], (28, 28)), cmap ='gray')
-            a[1][i].imshow(np.reshape(adv_images[i], (28, 28)), cmap ='gray')
+        f, a = plt.subplots(2, 50, figsize=(50, 2))
+        for i in range(50):
+            a[0][i].imshow(np.reshape(batch_xs[i], (28, 28)), cmap='gray')
+            a[0][i].axis('off')
+            a[1][i].axis('off')
+            a[1][i].imshow(np.reshape(adv_images[i], (28, 28)), cmap='gray')
         plt.show()
         plt.savefig('./Result/image.jpg')   
 
@@ -107,9 +107,9 @@ def train():
 
         total_batch = int(mnist.train.num_examples/batch_size)
         #for epoch in range(training_epochs):
-        for epoch in range(3):
+        for epoch in range(10):
             #for i in range(total_batch):
-            for i in range(3):
+            for i in range(total_batch):
             	print epoch, training_epochs, i, total_batch 
                 batch_xs, batch_ys = mnist.train.next_batch(batch_size)
 
