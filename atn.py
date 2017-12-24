@@ -3,8 +3,8 @@ import numpy as np
 import atn_model as atn
 import os
 from tensorflow.examples.tutorials.mnist import input_data
-import matplotlib  
-matplotlib.use('Agg') 
+import matplotlib
+matplotlib.use('Agg')  
 import matplotlib.pyplot as plt
 
 FLAGS = tf.flags.FLAGS
@@ -33,7 +33,7 @@ def test():
     """
     """
     print "ok\n"
-    batch_size = 1000
+    batch_size = 64
     batch_xs, batch_ys = mnist.test.next_batch(batch_size)
     model = atn.ATN(images_holder, label_holder, p_keep_holder, rerank_holder)
 	
@@ -66,7 +66,7 @@ def test():
                 p_keep_holder: 1.0
             })))
             
-        confidence_origin = sess.run(model._target.showY, feed_dict={
+        """confidence_origin = sess.run(model._target.showY, feed_dict={
         						images_holder: batch_xs,
                 				#label_holder: mnist.test.labels,
                 				label_holder: batch_ys,
@@ -78,27 +78,17 @@ def test():
                 				#label_holder: mnist.test.labels,
                 				label_holder: batch_ys,
                 				p_keep_holder: 1.0
-            				})
+            				})"""
 
         # Show some results.
-        plt.axis('off')
-        f, a = plt.subplots(2, 10, figsize=(64, 2))
+        f, a = plt.subplots(2, 10, figsize=(10, 2))
         
         for i in range(10):
             #a[0][i].imshow(np.reshape(mnist.test.images[i], (28, 28)))
-            a[0][i].axis('off')
-            a[1][i].axis('off')
-            a[0][i].imshow(np.reshape(batch_xs[i], (28, 28)), cmap='Greys_r')
-            a[1][i].imshow(np.reshape(adv_images[i], (28, 28)), cmap='Greys_r')
+            a[0][i].imshow(np.reshape(batch_xs[i], (28, 28)), cmap ='gray')
+            a[1][i].imshow(np.reshape(adv_images[i], (28, 28)), cmap ='gray')
         plt.show()
-        plt.savefig('./Result/image.jpg')  
-        
-        #data_file = open("result_data", "w+")
-        #for i in range(0, 10):
-        print(confidence_origin[0])
-        #for i in range(0, 10):
-        print(confidence_adv[0])
-        #data_file.close()
+        plt.savefig('./Result/image.jpg')   
 
 
 def train():
@@ -117,9 +107,9 @@ def train():
 
         total_batch = int(mnist.train.num_examples/batch_size)
         #for epoch in range(training_epochs):
-        for epoch in range(10):
-            for i in range(total_batch):
-            #for i in range(3):
+        for epoch in range(3):
+            #for i in range(total_batch):
+            for i in range(3):
             	print epoch, training_epochs, i, total_batch 
                 batch_xs, batch_ys = mnist.train.next_batch(batch_size)
 

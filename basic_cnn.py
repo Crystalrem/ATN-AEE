@@ -15,7 +15,7 @@ class BasicCnn:
     """
 
     def __init__(self, data, groundtruth, p_keep):
-        self.data = tf.reshape(data, [-1, 28 * 28])
+        self.data = tf.reshape(data, [-1, 28, 28, 1])
         self.groundtruth = groundtruth
         self.p_keep = p_keep
         self.weights
@@ -27,9 +27,9 @@ class BasicCnn:
     @lazy_property
     def weights(self):
         _weights = {
-            #'W_conv1': ne.weight_variable([5, 5, 1, 32], name='W_conv1'),
-            #'W_conv2': ne.weight_variable([5, 5, 32, 64], name='W_conv2'),
-            'W_fc1': ne.weight_variable([28 * 28, 1024], name='W_fc1'),
+            'W_conv1': ne.weight_variable([5, 5, 1, 32], name='W_conv1'),
+            'W_conv2': ne.weight_variable([5, 5, 32, 64], name='W_conv2'),
+            'W_fc1': ne.weight_variable([7 * 7 * 64, 1024], name='W_fc1'),
             'W_fc2': ne.weight_variable([1024, 10], name='W_fc2')
         }
         return _weights
@@ -37,31 +37,18 @@ class BasicCnn:
     @lazy_property
     def biases(self):
         _biases = {
-           # 'b_conv1': ne.bias_variable([32], name='b_conv1'),
-           # 'b_conv2': ne.bias_variable([64], name='b_conv2'),
+            'b_conv1': ne.bias_variable([32], name='b_conv1'),
+            'b_conv2': ne.bias_variable([64], name='b_conv2'),
             'b_fc1': ne.bias_variable([1024], name='b_fc1'),
             'b_fc2': ne.bias_variable([10], name='b_fc2')
         }
         return _biases
 
     @lazy_property
-    def showY(self):
-    	h_fc1 = tf.nn.relu(
-            tf.matmul(
-                self.data, self.weights['W_fc1']
-            ) + self.biases['b_fc1']
-        )
-
-        h_fc1_drop = tf.nn.dropout(h_fc1, self.p_keep)
-        h_fc2 = tf.matmul(h_fc1_drop, self.weights['W_fc2']) + \
-            self.biases['b_fc2']
-        y_conv = tf.nn.softmax(h_fc2)
-        return y_conv
-    @lazy_property    
     def prediction(self):
         """
         The structure of the network.
-        
+        """
         h_conv1 = tf.nn.relu(
             ne.conv2d(
                 self.data, self.weights['W_conv1']
@@ -77,10 +64,9 @@ class BasicCnn:
         h_pool2 = ne.max_pool_2x2(h_conv2)
 
         h_pool2_flat = tf.reshape(h_pool2, [-1, 7*7*64])
-        """
         h_fc1 = tf.nn.relu(
             tf.matmul(
-                self.data, self.weights['W_fc1']
+                h_pool2_flat, self.weights['W_fc1']
             ) + self.biases['b_fc1']
         )
 
